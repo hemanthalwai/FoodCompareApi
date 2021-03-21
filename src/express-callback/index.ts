@@ -1,28 +1,19 @@
-import { Request, Response } from "express"
+import { Request, Response } from "express";
+import { castToHttpRequest } from "../express-typecast";
 
-module.exports = function makeExpressCallback (controller) {
-    return (req: Request, res: Response) => {
-      const httpRequest = {
-        body: req.body,
-        query: req.query,
-        params: req.params,
-        ip: req.ip,
-        method: req.method,
-        path: req.path,
-        headers: {
-          'Content-Type': req.get('Content-Type'),
-          Referer: req.get('referer'),
-          'User-Agent': req.get('User-Agent')
-        }
+export const makeExpressCallback = async (controller) => {
+    return async(req: Request, res: Response) => {
+      const httpRequest = await castToHttpRequest(req);
+      try{
+        const httpResponse = await controller(httpRequest);
+        if(httpResponse.headers)
+          res.set(httpResponse.headers)
+        res.type('json')
+        res.status(httpResponse.statusCode).send(httpResponse.body)
       }
-      controller(httpRequest)
-        .then(httpResponse => {
-          if (httpResponse.headers) {
-            res.set(httpResponse.headers)
-          }
-          res.type('json')
-          res.status(httpResponse.statusCode).send(httpResponse.body)
-        })
-        .catch(e => res.status(500).send({ error: 'An unkown error occurred.' }))
+      catch(e){
+         res.status(500).send({ error: 'An unkown error occurred.', msg: e.message });
+      }
+
     }
   }
