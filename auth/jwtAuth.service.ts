@@ -1,6 +1,7 @@
 import { IAuthService } from "./IAuthService";
 import jwt from 'jsonwebtoken';
 import { ILogger } from "../logger/ILogger";
+import { Config } from "../config/index";
 
 export class JwtAuthService implements IAuthService{
 
@@ -8,7 +9,7 @@ export class JwtAuthService implements IAuthService{
     private logger: ILogger;
     private isLoggerInitialized: boolean;
 
-    constructor(config, logger = null) {
+    constructor(config: Config, logger = null) {
         this.config = config;
         this.logger = logger;
         if(this.logger){
