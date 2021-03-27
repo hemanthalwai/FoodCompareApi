@@ -1,8 +1,7 @@
-interface Dictionary<T> {
-    [key: string]: T;
-}
+import { IHttpRequest } from "./httpRequest.interface"
+import { Dictionary } from './dictionary';
 
-export class HttpRequest {
+export class HttpRequest implements IHttpRequest{
     private body: any
     private query: any
     private params: Dictionary<string>
@@ -40,5 +39,11 @@ export class HttpRequest {
         }
         public getBody(): any{
             return this.body;
+        }
+        public getHeaders(): any{
+            return this.headers;
+        }
+        public getHeader(key: string): string{
+            return (this.headers == null)? null : this.headers[key];
         }
 }

@@ -1,6 +1,7 @@
+import { ExpressHook } from "../express-typecast";
 import { Config } from "../../config/index";
 import { BaseController } from "../controllers/base-controller";
-
+import { server } from '../index'
 export class RouteHandler implements IRouteHandler{
 
     private static router: any;
@@ -10,21 +11,22 @@ export class RouteHandler implements IRouteHandler{
         RouteHandler.router = router;
         this.config = config;
     }
-    getRouter() {
-        throw new Error("Method not implemented.");
+    getRouter(): any {
+        return RouteHandler.getRouter();
     }
 
     static getRouter(): any {
         return RouteHandler.router;
     }
 
-    addRoute = (route: string, controller: BaseController) => {
-        const apiBasePath = this.config.getValue('API_BASEPATH') || '';
-        RouteHandler.router.use(apiBasePath + route, controller);
+    addRoute(route: string, controller: any) {
+        const apiBasePath = this.config.getValue('API_BASEPATH') || '/api';
+        const app = server.getApp();
+        app.use(apiBasePath + route, controller);
     }
 }
 
 export interface IRouteHandler{
     getRouter();
-    addRoute(route: string, controller: BaseController)
+    addRoute(route: string, controller: any)
 }

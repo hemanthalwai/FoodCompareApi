@@ -7,6 +7,7 @@
         "sourceMap": true,
         "outDir": "dist",
         "baseUrl": ".",
+        "watch": true,
         "paths": {
             "*": [
                 "node_modules/*"
@@ -14,9 +15,12 @@
         }
     },
     "include": [
-        "src/**/*.ts"
+        "src/**/*.ts",
+        "config/*.ts",
+        "auth/*.ts",
+        "db/*.ts",
     ],
-    "lib": ["es2015"],
+    "lib": ["es2015", "DOM"],
     "exclude": [
         "node_modules",
         ".vscode"

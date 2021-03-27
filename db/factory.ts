@@ -1,13 +1,27 @@
-import mongodb from 'mongodb'
+import mongoose from 'mongoose';
+import { Config } from '../config'
 
-const MongoClient = mongodb.MongoClient
-const url = process.env.DM_COMMENTS_DB_URL
-const dbName = 'test' || process.env.DM_COMMENTS_DB_NAME
-const client = new MongoClient(url, { useNewUrlParser: true })
+let db: mongoose.Connection;
+class DbFactory{
 
-export async function makeDb () {
-  if (!client.isConnected()) {
-    await client.connect()
+  private config: Config;
+
+  constructor(config: Config) {
+      this.config = config;
   }
-  return client.db(dbName)
+
+  init = async() => {
+    const dbConnectionString = this.config.getValue('DB_CONNECTION_STRING');
+    db = mongoose.createConnection(dbConnectionString, {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useUnifiedTopology: true
+  });
+    db.on('error', console.error.bind(console, 'connection error:'));
+    db.once('open', () => {
+      console.log('DB connected');
+    });
+  }
 }
+
+export {DbFactory, db};
